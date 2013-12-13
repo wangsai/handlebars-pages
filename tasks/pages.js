@@ -18,13 +18,13 @@ module.exports = function(grunt) {
 
     var options = this.options({
       context: function(src, dest){return {};}, //extra data to template, and will integrate other data
-      handlebars: handlebars
+      marked: {}
     });
 
-    helpers.register(handlebars, {marked: options.marked ||{}});
+    helpers.register(handlebars, {marked: options.marked});
 
     //create express-hbs with parameters
-    var hbs = require('express-hbs').express3(options);
+    var hbs = require('express-hbs').express3(_.extend({handlebars: handlebars}, options));
     
 
     grunt.log.debug(inspect(this.files));
