@@ -1,7 +1,7 @@
 {
   "name": "handlebars-pages",
   "description": "Compile templates with contents to html pages.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "homepage": "https://github.com/wangsai/handlebars-pages",
   "author": {
     "name": "WangSai",
