@@ -18,7 +18,8 @@ module.exports = function(grunt) {
 
     var options = this.options({
       context: function(src, dest){return {};}, //extra data to template, and will integrate other data
-      marked: {}
+      marked: {},
+      yfm: function(yfmOptions){return yfmOptions;} //YFM options for modify
     });
 
     helpers.register(handlebars, {marked: options.marked});
@@ -35,21 +36,11 @@ module.exports = function(grunt) {
 
     function convert(src, dest, next){
       var afile = _.first(src),
-        content;
+        content,
+        yfmOptions,
+        context;
       if(afile)
       {
-          //compose 'context' 
-          var context = {};
-          if(grunt.util.kindOf(options.context) === 'function')
-          {
-            context = options.context(afile, dest);
-          }
-          else
-          {
-            context = options.context;
-          }
-
-
           
           //create a temp file
           temp.open({suffix: options.extname || ".hbs"}, function(err, info) {
@@ -64,8 +55,29 @@ module.exports = function(grunt) {
 
             grunt.log.debug("temp file path: " + info.path);
 
+            //compose 'context' 
+            if(grunt.util.kindOf(options.context) === 'function')
+            {
+              context = options.context(afile, dest);
+            }
+            else
+            {
+              context = options.context;
+            }
+
+            //process yfm
+            if(grunt.util.kindOf(options.yfm) === 'function')
+            {
+              yfmOptions = options.yfm(extractYfm(afile));
+            }
+            else
+            {
+              yfmOptions = options.yfm;
+            }
+
+
             //merge page yfm and user added options
-            context = _.extend({}, context, extractYfm(afile));
+            context = _.extend({}, context, yfmOptions);
 
             hbs(info.path, context, function(err, res){
 
