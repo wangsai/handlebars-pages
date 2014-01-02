@@ -19,10 +19,16 @@ module.exports = function(grunt) {
     var options = this.options({
       context: function(src, dest){return {};}, //extra data to template, and will integrate other data
       marked: {},
-      yfm: function(yfmOptions){return yfmOptions;} //YFM options for modify
+      yfm: function(yfmOptions){return yfmOptions;}, //YFM options for modify
+      registerHelpers: function(handlebars){} //register more helpers
     });
 
     helpers.register(handlebars, {marked: options.marked});
+
+    if(grunt.util.kindOf(options.registerHelpers) === 'function')
+    {
+      options.registerHelpers(handlebars);
+    }
 
     //create express-hbs with parameters
     var hbs = require('express-hbs').express3(_.extend({handlebars: handlebars}, options));
